@@ -3,7 +3,6 @@ from requests import Response, session
 from restclient.restclient import RestClient
 
 
-
 class MailHogApi:
     def __init__(self, host='http://localhost:5025'):
         self.host = host
