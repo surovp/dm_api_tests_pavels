@@ -24,18 +24,18 @@ class ColorSchema(Enum):
     NIGHT = 'Night'
 
 
-class PagingSettings:
+class PagingSettings(BaseModel):
     posts_per_page: int = Field(alias='postsPerPage')
-    comments_per_page:int = Field(alias='commentsPerPage')
-    topics_per_page:int = Field(alias='topicsPerPage')
-    messages_per_page:int = Field(alias='messagesPerPage')
-    entities_per_page:int = Field(alias='entitiesPerPage')
+    comments_per_page: int = Field(alias='commentsPerPage')
+    topics_per_page: int = Field(alias='topicsPerPage')
+    messages_per_page: int = Field(alias='messagesPerPage')
+    entities_per_page: int = Field(alias='entitiesPerPage')
 
 
 class UserSettings(BaseModel):
     color_schema: List[ColorSchema] = Field(alias='colorSchema')
-    nanny_greetings_message = StrictStr = Field(alias='nannyGreetingsMessage')
-    paging: PagingSettings
+    nanny_greetings_message: StrictStr = Field(alias='nannyGreetingsMessage')
+    paging: Optional[PagingSettings]
 
 
 class UserInfo(BaseModel):

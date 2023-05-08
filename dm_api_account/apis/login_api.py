@@ -3,7 +3,6 @@ from ..models.login_credentials_model import LoginCredentialsModel
 from dm_api_account.models.user_envelope_model import UserEnvelopeModel
 
 
-
 class LoginApi:
 
     def __init__(self, host, headers=None):

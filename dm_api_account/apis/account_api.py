@@ -68,7 +68,7 @@ class AccountApi:
 
         response = self.client.put(
             path=f"/v1/account/password",
-            json=json.dict(by_alias=True, exclude_none=True)
+            json=json.dict(by_alias=True, exclude_none=True),
             **kwargs
         )
         UserEnvelopeModel(**response.json())
