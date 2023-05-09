@@ -1,6 +1,6 @@
 from requests import Response, session
-from ..models.login_credentials_model import LoginCredentialsModel
-from dm_api_account.models.user_envelope_model import UserEnvelopeModel
+from ..models import *
+from ..utilities import validate_request_json, validate_status_code
 
 
 class LoginApi:
@@ -11,7 +11,7 @@ class LoginApi:
         if headers:
             self.session.headers = headers
 
-    def post_v1_account_login(self, json: LoginCredentialsModel, **kwargs) -> Response:
+    def post_v1_account_login(self, json: LoginCredentials, status_code: int, **kwargs) -> Response | UserEnvelope:
         """
         Authenticate via credentials
         :param json login_credentials_model
@@ -19,13 +19,15 @@ class LoginApi:
         """
         response = self.session.post(
             url=f"{self.host}/v1/account/login",
-            json=json.dict(by_alias=True, exclude_none=True),
+            json=validate_request_json(json),
             **kwargs
         )
-        UserEnvelopeModel(**response.json())
+        validate_status_code(response, status_code)
+        if response.status_code == 200:
+            return UserEnvelope(**response.json())
         return response
 
-    def delete_v1_account_login(self, **kwargs) -> Response:
+    def delete_v1_account_login(self, status_code: int, **kwargs) -> Response:
         """
         Logout as current user
         :return:
@@ -34,9 +36,10 @@ class LoginApi:
             url=f"{self.host}/v1/account/login",
             **kwargs
         )
+        validate_status_code(response, status_code)
         return response
 
-    def delete_v1_account_login_all(self, **kwargs) -> Response:
+    def delete_v1_account_login_all(self, status_code: int, **kwargs) -> Response:
         """
         Logout from every device
         :return:
@@ -45,4 +48,5 @@ class LoginApi:
             url=f"{self.host}/v1/account/login/all",
             **kwargs
         )
+        validate_status_code(response, status_code)
         return response
