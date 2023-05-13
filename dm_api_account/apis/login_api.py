@@ -11,9 +11,14 @@ class LoginApi:
         if headers:
             self.session.headers = headers
 
-    def post_v1_account_login(self, json: LoginCredentials, status_code: int, **kwargs) -> Response | UserEnvelope:
+    def post_v1_account_login(
+            self,
+            json: LoginCredentials,
+            status_code: int = 200,
+            **kwargs) -> Response | UserEnvelope:
         """
         Authenticate via credentials
+        :param status_code:
         :param json login_credentials_model
         :return:
         """
