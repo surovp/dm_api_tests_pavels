@@ -1,4 +1,12 @@
 from services.dm_api_account import Facade
+import structlog
+
+
+structlog.configure(
+    processors=[
+        structlog.processors.JSONRenderer(indent=4, sort_keys=True, ensure_ascii=False)
+    ]
+)
 
 
 def test_get_v1_account():
@@ -7,5 +15,9 @@ def test_get_v1_account():
         login='logintest14',
         password='logintest14'
     )
-    print(token)
-    #api.account_api.get_v1_account()
+    api.account.set_headers(headers=token)
+    api.login.set_headers(headers=token)
+
+    api.account.get_current_user_info()
+    #api.login.logout_user()
+    api.login.logout_user_from_all_devices()

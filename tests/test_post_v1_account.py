@@ -1,8 +1,4 @@
-import time
-
-from dm_api_account.models.registration_model import Registration
 from services.dm_api_account import Facade
-from generic.helpers.mailhog import MailHogApi
 import structlog
 
 
