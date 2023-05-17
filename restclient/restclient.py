@@ -13,6 +13,23 @@ class RestClient:
             self.session.headers.update(headers)
         self.log = structlog.get_logger(self.__class__.__name__).bind(service='api')
 
+    # def steps(self,
+    #           start_message: str = "",
+    #           finish_message: str = "",
+    #           log_it=True
+    #           ):
+    #     def wrapper(function):
+    #         def _wrap(*args, **kwargs):
+    #             if log_it:
+    #                 print(f'\n{start_message}')
+    #             result = function(*args, **kwargs)
+    #             if log_it:
+    #                 print(f'\n{finish_message}')
+    #             return result
+    #         return _wrap
+    #
+    #     return wrapper
+
     def post(self, path: str, **kwargs) -> Response:
         return self._send_request('POST', path, **kwargs)
 

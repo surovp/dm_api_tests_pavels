@@ -4,3 +4,5 @@ structlog
 curlify
 pydantic
 pyhamcrest
+records
+psycopg2-binary

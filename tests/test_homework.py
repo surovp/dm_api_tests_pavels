@@ -1,3 +1,4 @@
+from generic.helpers.dm_db import DmDatabase
 from services.dm_api_account import Facade
 import structlog
 
@@ -53,3 +54,20 @@ def test_create_and_logout_user2():
     )
     api.login.logout_user(headers=token)
 
+
+# тест активации активированного пользователя
+def test_activate_activated_user():
+
+    api = Facade(host='http://localhost:5051')
+    login = 'logintest17'
+    email = 'logintest17@test'
+    password = 'logintest17'
+
+    response = api.account.register_new_user(
+        login=login,
+        email=email,
+        password=password
+    )
+    db = DmDatabase(user='postgres', password='admin', host='localhost', database='dm3.5')
+    db.activate_user(login=login, param=True)
+    api.account.activate_registered_user(login=login)

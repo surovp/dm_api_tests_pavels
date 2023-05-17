@@ -1,8 +1,21 @@
 import json
 import time
-
-from requests import Response, session
+from requests import Response
 from restclient.restclient import RestClient
+
+
+def decorator(fn):
+    def wrapper(*args, **kwargs):
+        for i in range(5):
+            response = fn(*args, **kwargs)
+            emails = response.json()['items']
+            if len(emails) < 5:
+                print(f'attempt {i}')
+                time.sleep(2)
+                continue
+            else:
+                return response
+    return wrapper
 
 
 class MailHogApi:
@@ -48,3 +61,8 @@ class MailHogApi:
         time.sleep(2)
         print('Попытка получить письмо')
         return self.get_token_by_login(login=login, attempt=attempt-1)
+
+    def delete_all_messages(self):
+        response = self.client.delete(path='/api/v1/messages')
+        return response
+
