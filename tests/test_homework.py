@@ -71,3 +71,9 @@ def test_activate_activated_user():
     db = DmDatabase(user='postgres', password='admin', host='localhost', database='dm3.5')
     db.activate_user(login=login, param=True)
     api.account.activate_registered_user(login=login)
+
+    dataset = db.get_user_by_login(login=login)
+    for row in dataset:
+        assert row['Activated'] is True, f'User {login} not activated'
+
+
