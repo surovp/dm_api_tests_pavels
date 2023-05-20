@@ -1,6 +1,5 @@
 import time
-
-from generic.helpers.dm_db import DmDatabase
+from generic.helpers.orm_db import OrmDatabase
 from services.dm_api_account import Facade
 import structlog
 
@@ -15,12 +14,12 @@ structlog.configure(
 def test_post_v1_account():
     api = Facade(host='http://localhost:5051')
 
-    login = 'logintest14'
-    email = 'logintest14@test'
-    password = 'logintest14'
-    db = DmDatabase(user='postgres', password='admin', host='localhost', database='dm3.5')
-    db.delete_user_by_login(login=login)
-    dataset = db.get_user_by_login(login=login)
+    login = 'logintest12'
+    email = 'logintest12@test'
+    password = 'logintest12'
+    orm = OrmDatabase(user='postgres', password='admin', host='localhost', database='dm3.5')
+    orm.delete_user_by_login(login=login)
+    dataset = orm.get_user_by_login(login=login)
     assert len(dataset) == 0
 
     api.mailhog.delete_all_messages()
@@ -30,18 +29,19 @@ def test_post_v1_account():
         email=email,
         password=password
     )
-    dataset = db.get_user_by_login(login=login)
+    dataset = orm.get_user_by_login(login=login)
     for row in dataset:
-        assert row['Login'] == login, f'User {login} not registered'
-        assert row['Activated'] is False, f'User {login} was activated'
+        assert row.Login == login, f'User {login} not registered'
+        assert row.Activated is False, f'User {login} was activated'
 
     api.account.activate_registered_user(login=login)
-    dataset = db.get_user_by_login(login=login)
+    dataset = orm.get_user_by_login(login=login)
     time.sleep(2)
     for row in dataset:
-        assert row['Activated'] is True, f'User {login} not activated'
+        assert row.Activated is True, f'User {login} not activated'
 
     api.login.login_user(
         login=login,
         password=password
     )
+    orm.db.close_connection()

@@ -6,3 +6,5 @@ pydantic
 pyhamcrest
 records
 psycopg2-binary
+sqlalchemy
+sqlacodegen
