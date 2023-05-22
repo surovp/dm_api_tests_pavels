@@ -70,7 +70,7 @@ def test_activate_activated_user():
         password=password
     )
     orm = OrmDatabase(user='postgres', password='admin', host='localhost', database='dm3.5')
-    orm.activate_user(login=login, param=True)
+    orm.activate_user(login=login, is_activate=True)
     api.account.activate_registered_user(login=login)
 
     dataset = orm.get_user_by_login(login=login)

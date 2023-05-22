@@ -28,18 +28,16 @@ class OrmDatabase:
         dataset = self.db.send_bulk_query(query)
         return dataset
 
-    def activate_user(self, login, param: bool = True):
+    def activate_user(self, login, is_activate: bool = True):
 
-        query = update(User)\
-            .where(User.Login == login)\
-            .values(
+        query = update(User).where(
+            User.Login == login
+        ).values(
             {
-                User.Activated: param
+                User.Activated: is_activate
             }
         )
         dataset = self.db.send_bulk_query(query)
         return dataset
-
-
 
 
