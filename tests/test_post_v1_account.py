@@ -1,4 +1,7 @@
 import time
+
+from hamcrest import assert_that, has_properties
+
 from generic.helpers.orm_db import OrmDatabase
 from services.dm_api_account import Facade
 import structlog
@@ -31,8 +34,14 @@ def test_post_v1_account():
     )
     dataset = orm.get_user_by_login(login=login)
     for row in dataset:
-        assert row.Login == login, f'User {login} not registered'
-        assert row.Activated is False, f'User {login} was activated'
+        assert_that(row, has_properties(
+            {
+                'Login': login,
+                'Activated': False
+            }
+        ))
+        # assert row.Login == login, f'User {login} not registered'
+        # assert row.Activated is False, f'User {login} was activated'
 
     api.account.activate_registered_user(login=login)
     dataset = orm.get_user_by_login(login=login)
