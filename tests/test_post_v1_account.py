@@ -14,13 +14,27 @@ def random_string():
     return string
 
 
+def random_short_password():
+    string = ''
+    for _ in range(random.randint(1, 5)):
+        string += random.choice(ascii_letters + digits)
+    return string
+
+
+def random_long_password():
+    string = ''
+    for _ in range(random.randint(6, 100)):
+        string += random.choice(ascii_letters + digits)
+    return string
+
+
 @pytest.fixture
 def prepare_user(dm_api_facade, dm_orm):
     data = namedtuple('user', 'login, email, password')
     user = data(
         login='logintest12',
         email='logintest12@test',
-        password='logintest12'
+        password='123456'
     )
     dm_orm.delete_user_by_login(login=user.login)
     dataset = dm_orm.get_user_by_login(login=user.login)
@@ -157,3 +171,146 @@ def test_post_v1_account_with_random_datas(dm_api_facade, dm_orm, login, email, 
         login=login,
         password=password
     )
+
+
+@pytest.mark.parametrize('login, password, email, check_password_error, status_code', [
+    ('logintest20', random_long_password(), 'logintest20@test.com', '', 201),
+    ('logintest20', random_short_password(), 'logintest20@test.com', 'Short', 400)
+])
+def test_post_v1_account_password(
+        dm_api_facade,
+        dm_orm,
+        login,
+        email,
+        password,
+        status_code,
+        check_password_error
+):
+    dm_orm.delete_user_by_login(login=login)
+    dm_api_facade.mailhog.delete_all_messages()
+    response = dm_api_facade.account.register_new_user(
+        login=login,
+        email=email,
+        password=password,
+        status_code=status_code
+    )
+    if status_code != 201 and len(password) <= 5:
+        assert_that(response.json()['errors'], has_entries(
+            {
+                "Password": [check_password_error]
+            }
+        ))
+    else:
+        dataset = dm_orm.get_user_by_login(login=login)
+        for row in dataset:
+            assert_that(row, has_entries(
+                {
+                    'Login': login,
+                    'Activated': False
+                }
+            ))
+
+        dm_api_facade.account.activate_registered_user(login=login)
+        dataset = dm_orm.get_user_by_login(login=login)
+        time.sleep(2)
+        for row in dataset:
+            assert row.Activated is True, f'User {login} not activated'
+
+        dm_api_facade.login.login_user(
+            login=login,
+            password=password
+        )
+
+
+@pytest.mark.parametrize('login, password, email, check_login_error, status_code', [
+    ('logintest20', random_long_password(), 'logintest20@test.com', '', 201),
+    ('logintest20', random_long_password(), 'logintest20@test.com', 'Taken', 400)
+])
+def test_post_v1_account_login(
+        dm_api_facade,
+        dm_orm,
+        login,
+        email,
+        password,
+        status_code,
+        check_login_error
+):
+    response = dm_api_facade.account.register_new_user(
+        login=login,
+        email=email,
+        password=password,
+        status_code=status_code
+    )
+    if status_code != 201:
+        assert_that(response.json()['errors'], has_entries(
+            {
+                "Login": [check_login_error]
+            }
+        ))
+    else:
+        dataset = dm_orm.get_user_by_login(login=login)
+        for row in dataset:
+            assert_that(row, has_entries(
+                {
+                    'Login': login,
+                    'Activated': False
+                }
+            ))
+
+        dm_api_facade.account.activate_registered_user(login=login)
+        dataset = dm_orm.get_user_by_login(login=login)
+        time.sleep(2)
+        for row in dataset:
+            assert row.Activated is True, f'User {login} not activated'
+
+        dm_api_facade.login.login_user(
+            login=login,
+            password=password
+        )
+
+
+@pytest.mark.parametrize('login, password, email, check_email_error, status_code', [
+    ('logintest21', random_long_password(), 'logintest21@test.com', '', 201),
+    ('logintest22', random_long_password(), 'logintest21@test.com', 'Taken', 400)
+])
+def test_post_v1_account_email(
+        dm_api_facade,
+        dm_orm,
+        login,
+        email,
+        password,
+        status_code,
+        check_email_error
+):
+    response = dm_api_facade.account.register_new_user(
+        login=login,
+        email=email,
+        password=password,
+        status_code=status_code
+    )
+    if status_code != 201:
+        assert_that(response.json()['errors'], has_entries(
+            {
+                "Email": [check_email_error]
+            }
+        ))
+    else:
+        dataset = dm_orm.get_user_by_login(login=login)
+        for row in dataset:
+            assert_that(row, has_entries(
+                {
+                    'Login': login,
+                    'Activated': False
+                }
+            ))
+
+        dm_api_facade.account.activate_registered_user(login=login)
+        dataset = dm_orm.get_user_by_login(login=login)
+        time.sleep(2)
+        for row in dataset:
+            assert row.Activated is True, f'User {login} not activated'
+
+        dm_api_facade.login.login_user(
+            login=login,
+            password=password
+        )
