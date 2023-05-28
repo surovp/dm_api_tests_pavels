@@ -52,7 +52,8 @@ def test_post_v1_account(dm_api_facade, dm_orm, prepare_user):
     response = dm_api_facade.account.register_new_user(
         login=login,
         email=email,
-        password=password
+        password=password,
+        status_code=201
     )
     dataset = dm_orm.get_user_by_login(login=login)
     for row in dataset:

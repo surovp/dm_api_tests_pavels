@@ -8,3 +8,4 @@ records
 psycopg2-binary
 sqlalchemy
 sqlacodegen
+vyper-config
