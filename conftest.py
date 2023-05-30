@@ -2,6 +2,7 @@ import pytest
 import structlog
 from vyper import v
 from pathlib import Path
+from generic.assertions.post_v1_account import AssertionsPostV1Account
 from services.dm_api_account import Facade
 from generic.helpers.mailhog import MailHogApi
 from generic.helpers.orm_db import OrmDatabase
@@ -33,16 +34,26 @@ def dm_api_facade(mailhog):
     )
 
 
+connect = None
+
+
 @pytest.fixture()
 def dm_orm():
-    orm = OrmDatabase(
-        user=v.get('database.dm3_5.user'),
-        password=v.get('database.dm3_5.password'),
-        host=v.get('database.dm3_5.host'),
-        database=v.get('database.dm3_5.database')
-    )
-    yield orm
-    orm.db.close_connection()
+    global connect
+    if connect is None:
+        connect = OrmDatabase(
+            user=v.get('database.dm3_5.user'),
+            password=v.get('database.dm3_5.password'),
+            host=v.get('database.dm3_5.host'),
+            database=v.get('database.dm3_5.database')
+        )
+    yield connect
+    connect.db.close_connection()
+
+
+@pytest.fixture()
+def assertions(dm_orm):
+    return AssertionsPostV1Account(dm_orm)
 
 
 @pytest.fixture(autouse=True)

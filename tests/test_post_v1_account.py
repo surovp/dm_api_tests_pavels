@@ -1,3 +1,4 @@
+import allure
 from hamcrest import assert_that, has_entries
 from string import ascii_letters, digits
 from collections import namedtuple
@@ -28,52 +29,54 @@ def random_long_password():
     return string
 
 
-@pytest.fixture
-def prepare_user(dm_api_facade, dm_orm):
-    data = namedtuple('user', 'login, email, password')
-    user = data(
-        login='logintest12',
-        email='logintest12@test',
-        password='123456'
-    )
-    dm_orm.delete_user_by_login(login=user.login)
-    dataset = dm_orm.get_user_by_login(login=user.login)
-    assert len(dataset) == 0
-    dm_api_facade.mailhog.delete_all_messages()
+@allure.suite("Тесты на проверку метода POST{host}/v1/account")
+@allure.sub_suite('Позитивные тесты')
+class TestsPostV1Account:
 
-    return user
+    @allure.step("Подготовка тестового пользователя")
+    @pytest.fixture
+    def prepare_user(self, dm_api_facade, dm_orm):
+        data = namedtuple('user', 'login, email, password')
+        user = data(
+            login='logintest12',
+            email='logintest12@test',
+            password='123456'
+        )
+        dm_orm.delete_user_by_login(login=user.login)
+        dataset = dm_orm.get_user_by_login(login=user.login)
+        assert len(dataset) == 0
+        dm_api_facade.mailhog.delete_all_messages()
 
+        return user
 
-def test_post_v1_account(dm_api_facade, dm_orm, prepare_user):
-    login = prepare_user.login
-    email = prepare_user.email
-    password = prepare_user.password
+    @allure.title('Проверка регистрации и активации пользователя')
+    def test_register_and_activate_user(self, dm_api_facade, dm_orm, prepare_user, assertions):
+        """
+        Тест проверяет создание и активацию пользователя в БД
+        """
+        login = prepare_user.login
+        email = prepare_user.email
+        password = prepare_user.password
 
-    response = dm_api_facade.account.register_new_user(
-        login=login,
-        email=email,
-        password=password,
-        status_code=201
-    )
-    dataset = dm_orm.get_user_by_login(login=login)
-    for row in dataset:
-        assert_that(row, has_entries(
-            {
-                'Login': login,
-                'Activated': False
-            }
-        ))
+        dm_api_facade.account.register_new_user(login=login, email=email, password=password, status_code=201)
+        assertions.check_user_was_created(login=login)
+        dm_api_facade.account.activate_registered_user(login=login)
+        assertions.check_user_was_activated(login=login)
+        dm_api_facade.login.login_user(login=login, password=password)
 
-    dm_api_facade.account.activate_registered_user(login=login)
-    dataset = dm_orm.get_user_by_login(login=login)
-    time.sleep(2)
-    for row in dataset:
-        assert row.Activated is True, f'User {login} not activated'
-
-    dm_api_facade.login.login_user(
-        login=login,
-        password=password
-    )
+    @pytest.mark.parametrize('login', [random_string() for _ in range(3)])
+    @pytest.mark.parametrize('email', [random_string() + '@' + random_string() + '.ru' for _ in range(3)])
+    @pytest.mark.parametrize('password', [random_string() for _ in range(3)])
+    def test_post_v1_account_with_random_datas(self, dm_api_facade, dm_orm, login, email, password, assertions):
+        dm_orm.delete_user_by_login(login=login)
+        dm_api_facade.mailhog.delete_all_messages()
+        dm_api_facade.account.register_new_user(login=login, email=email, password=password, status_code=201)
+        dm_orm.get_user_by_login(login=login)
+        assertions.check_user_was_created(login=login)
+        dm_api_facade.account.activate_registered_user(login=login)
+        dm_orm.get_user_by_login(login=login)
+        assertions.check_user_was_activated(login=login)
+        dm_api_facade.login.login_user(login=login, password=password)
 
 
 @pytest.mark.parametrize('login, email, password', [
@@ -141,39 +144,6 @@ def test_post_v1_account_with_datas_pairwise(dm_api_facade, dm_orm, login, email
         password=password
     )
 
-
-@pytest.mark.parametrize('login', [random_string() for _ in range(3)])
-@pytest.mark.parametrize('email', [random_string() + '@' + random_string() + '.ru' for _ in range(3)])
-@pytest.mark.parametrize('password', [random_string() for _ in range(3)])
-def test_post_v1_account_with_random_datas(dm_api_facade, dm_orm, login, email, password):
-    dm_orm.delete_user_by_login(login=login)
-    dm_api_facade.mailhog.delete_all_messages()
-    response = dm_api_facade.account.register_new_user(
-        login=login,
-        email=email,
-        password=password
-    )
-    dataset = dm_orm.get_user_by_login(login=login)
-    for row in dataset:
-        assert_that(row, has_entries(
-            {
-                'Login': login,
-                'Activated': False
-            }
-        ))
-
-    dm_api_facade.account.activate_registered_user(login=login)
-    dataset = dm_orm.get_user_by_login(login=login)
-    time.sleep(2)
-    for row in dataset:
-        assert row.Activated is True, f'User {login} not activated'
-
-    dm_api_facade.login.login_user(
-        login=login,
-        password=password
-    )
-
-
 @pytest.mark.parametrize('login, password, email, check_password_error, status_code', [
     ('logintest20', random_long_password(), 'logintest20@test.com', '', 201),
     ('logintest20', random_short_password(), 'logintest20@test.com', 'Short', 400)
@@ -222,7 +192,6 @@ def test_post_v1_account_password(
             password=password
         )
 
-
 @pytest.mark.parametrize('login, password, email, check_login_error, status_code', [
     ('logintest20', random_long_password(), 'logintest20@test.com', '', 201),
     ('logintest20', random_long_password(), 'logintest20@test.com', 'Taken', 400)
@@ -268,7 +237,6 @@ def test_post_v1_account_login(
             login=login,
             password=password
         )
-
 
 @pytest.mark.parametrize('login, password, email, check_email_error, status_code', [
     ('logintest21', random_long_password(), 'logintest21@test.com', '', 201),
