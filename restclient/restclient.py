@@ -35,7 +35,7 @@ def allure_attach(fn):
             )
         return response
 
-    return wrapper()
+    return wrapper
 
 
 class RestClient:

@@ -1,5 +1,7 @@
 import json
 import time
+
+import allure
 from requests import Response
 from restclient.restclient import RestClient
 
@@ -29,12 +31,13 @@ class MailHogApi:
         :param limit:
         :return:
         """
-        response = self.client.get(
-            path=f"/api/v2/messages",
-            params={
-                'limit': limit
-            }
-        )
+        with allure.step("Получение всех писем"):
+            response = self.client.get(
+                path=f"/api/v2/messages",
+                params={
+                    'limit': limit
+                }
+            )
         return response
 
     def get_token_from_last_email(self) -> str:
@@ -49,20 +52,22 @@ class MailHogApi:
         return token
 
     def get_token_by_login(self, login: str, attempt=5):
-        if attempt == 0:
-            raise AssertionError(f'Не удалось получить письмо логина {login}')
-        emails = self.get_api_v2_messages(limit=100).json()['items']
-        for email in emails:
-            user_data = json.loads(email['Content']['Body'])
-            if login == user_data.get('Login'):
-                token = user_data['ConfirmationLinkUrl'].split('/')[-1]
-                print(token)
-                return token
-        time.sleep(2)
-        print('Попытка получить письмо')
+        with allure.step("Получение токена из письма по Логину"):
+            if attempt == 0:
+                raise AssertionError(f'Не удалось получить письмо логина {login}')
+            emails = self.get_api_v2_messages(limit=100).json()['items']
+            for email in emails:
+                user_data = json.loads(email['Content']['Body'])
+                if login == user_data.get('Login'):
+                    token = user_data['ConfirmationLinkUrl'].split('/')[-1]
+                    print(token)
+                    return token
+            time.sleep(2)
+            print('Попытка получить письмо')
         return self.get_token_by_login(login=login, attempt=attempt-1)
 
     def delete_all_messages(self):
-        response = self.client.delete(path='/api/v1/messages')
+        with allure.step("Удаление всех писем из ящика"):
+            response = self.client.delete(path='/api/v1/messages')
         return response
 

@@ -1,4 +1,6 @@
 import uuid
+
+import allure
 import structlog
 from sqlalchemy import create_engine
 
@@ -42,5 +44,6 @@ class OrmClient:
             event='request',
             query=str(query)
         )
+
         self.db.execute(statement=query)
 
