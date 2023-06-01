@@ -1,4 +1,6 @@
 import uuid
+
+import allure
 import records
 import structlog
 
@@ -17,24 +19,28 @@ class DbClient:
 
     def send_query(self, query):
         log = self.log.bind(event_id=str(uuid.uuid4()))
-        print(query)
-        log.msg(
-            event='request',
-            query=query
-        )
-        dataset = self.db.query(query=query).as_dict()
-        log.msg(
-            event='response',
-            dataset=dataset
-        )
+        with allure.step("Печать запроса и лога"):
+            print(query)
+            log.msg(
+                event='request',
+                query=query
+            )
+        with allure.step("Выполнение запроса и вывод ответа"):
+            dataset = self.db.query(query=query).as_dict()
+            log.msg(
+                event='response',
+                dataset=dataset
+            )
         return dataset
 
     def send_bulk_query(self, query):
         log = self.log.bind(event_id=str(uuid.uuid4()))
-        print(query)
-        log.msg(
-            event='request',
-            query=query
-        )
-        self.db.bulk_query(query=query)
+        with allure.step("Печать запроса и лога"):
+            print(query)
+            log.msg(
+                event='request',
+                query=query
+            )
+        with allure.step("Выполнение запроса"):
+            self.db.bulk_query(query=query)
 

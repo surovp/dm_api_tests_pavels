@@ -47,8 +47,9 @@ class MailHogApi:
         :return:
         """
         emails = self.get_api_v2_messages(limit=1).json()
-        token_url = json.loads(emails['items'][0]['Content']['Body'])['ConfirmationLinkUrl']
-        token = token_url.split('/')[-1]
+        with allure.step("Получение токена из последнего письма"):
+            token_url = json.loads(emails['items'][0]['Content']['Body'])['ConfirmationLinkUrl']
+            token = token_url.split('/')[-1]
         return token
 
     def get_token_by_login(self, login: str, attempt=5):
