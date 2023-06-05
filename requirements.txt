@@ -10,3 +10,7 @@ sqlalchemy
 sqlacodegen
 vyper-config
 allure-pytest
+git+https://github.com/surovp/orm_client.git
+git+https://github.com/surovp/restclient.git
+git+https://github.com/surovp/db_client.git
+git+https://github.com/surovp/dm_api_account.git
