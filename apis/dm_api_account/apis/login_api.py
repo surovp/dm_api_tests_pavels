@@ -1,9 +1,8 @@
-import allure
-from requests import Response, session
-
-from restclient.restclient import RestClient
-from ..models import *
 from ..utilities import validate_request_json, validate_status_code
+from common_libs.restclient.restclient import RestClient
+from requests import Response
+from ..models import *
+import allure
 
 
 class LoginApi:

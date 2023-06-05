@@ -1,9 +1,10 @@
-import allure
+from data.post_v1_account import PostV1AccountData as user_data
 from hamcrest import assert_that, has_entries
 from string import ascii_letters, digits
 from collections import namedtuple
 import random
 import pytest
+import allure
 import time
 
 
@@ -38,9 +39,9 @@ class TestsPostV1Account:
     def prepare_user(self, dm_api_facade, dm_orm):
         data = namedtuple('user', 'login, email, password')
         user = data(
-            login='logintest12',
-            email='logintest12@test',
-            password='123456'
+            login=user_data.login,
+            email=user_data.email,
+            password=user_data.password
         )
         dm_orm.delete_user_by_login(login=user.login)
         dataset = dm_orm.get_user_by_login(login=user.login)
