@@ -1,4 +1,3 @@
-from generic.helpers.dm_db import DmDatabase
 from generic.helpers.orm_db import OrmDatabase
 from services.dm_api_account import Facade
 import structlog
@@ -19,7 +18,8 @@ def test_create_and_logout_user1():
     response = api.account.register_new_user(
         login=login,
         email=email,
-        password=password
+        password=password,
+        status_code=201
     )
     api.account.activate_registered_user(login=login)
     api.login.login_user(
@@ -42,7 +42,8 @@ def test_create_and_logout_user2():
     response = api.account.register_new_user(
         login=login,
         email=email,
-        password=password
+        password=password,
+        status_code=201
     )
     api.account.activate_registered_user(login=login)
     api.login.login_user(
@@ -60,14 +61,15 @@ def test_create_and_logout_user2():
 def test_activate_activated_user():
 
     api = Facade(host='http://localhost:5051')
-    login = 'logintest17'
-    email = 'logintest17@test'
-    password = 'logintest17'
+    login = 'logintest26'
+    email = 'logintest26@test'
+    password = 'logintest26'
 
     response = api.account.register_new_user(
         login=login,
         email=email,
-        password=password
+        password=password,
+        status_code=201
     )
     orm = OrmDatabase(user='postgres', password='admin', host='localhost', database='dm3.5')
     orm.activate_user(login=login, is_activate=True)
