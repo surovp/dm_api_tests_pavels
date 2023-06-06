@@ -34,12 +34,9 @@ def dm_api_facade(mailhog):
     )
 
 
-connect = None
-
-
 @pytest.fixture()
 def dm_orm():
-    global connect
+    connect = None
     if connect is None:
         connect = OrmDatabase(
             user=v.get('database.dm3_5.user'),

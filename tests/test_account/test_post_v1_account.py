@@ -91,7 +91,8 @@ def test_post_v1_account_with_datas(dm_api_facade, dm_orm, login, email, passwor
     response = dm_api_facade.account.register_new_user(
         login=login,
         email=email,
-        password=password
+        password=password,
+        status_code=201
     )
     dataset = dm_orm.get_user_by_login(login=login)
     for row in dataset:
@@ -120,10 +121,11 @@ def test_post_v1_account_with_datas(dm_api_facade, dm_orm, login, email, passwor
 def test_post_v1_account_with_datas_pairwise(dm_api_facade, dm_orm, login, email, password):
     dm_orm.delete_user_by_login(login=login)
     dm_api_facade.mailhog.delete_all_messages()
-    response = dm_api_facade.account.register_new_user(
+    dm_api_facade.account.register_new_user(
         login=login,
         email=email,
-        password=password
+        password=password,
+        status_code=201
     )
     dataset = dm_orm.get_user_by_login(login=login)
     for row in dataset:

@@ -6,7 +6,7 @@ except ImportError:
 
 
 class Account:
-    def __init__(self, facade: Facade):
+    def __init__(self, facade):
         self.facade = facade
 
     def set_headers(self, headers):
