@@ -1,5 +1,5 @@
 import structlog
-from apis.dm_api_account import UserRole
+from dm_api_account.models.user_envelope_model import UserRole
 from services.dm_api_account import Facade
 from hamcrest import assert_that, has_properties
 
