@@ -2,10 +2,10 @@ import pytest
 import structlog
 from vyper import v
 from pathlib import Path
-from generic.assertions.post_v1_account import AssertionsPostV1Account
 from services.dm_api_account import Facade
 from generic.helpers.mailhog import MailHogApi
 from generic.helpers.orm_db import OrmDatabase
+from generic.assertions.post_v1_account import AssertionsPostV1Account
 
 
 structlog.configure(
