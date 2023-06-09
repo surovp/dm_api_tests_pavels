@@ -7,7 +7,8 @@ except ImportError:
 
 class Account:
     def __init__(self, facade):
-        self.facade = facade
+        from services.dm_api_account import Facade
+        self.facade: Facade = facade
 
     def set_headers(self, headers):
         self.facade.account_api.client.session.headers.update(headers)

@@ -5,7 +5,6 @@ from collections import namedtuple
 import random
 import pytest
 import allure
-import time
 
 
 def random_string():
@@ -85,67 +84,32 @@ class TestsPostV1Account:
     ('87589', '87589@123.com', '87589'),
     ('qwerty124#$%', 'qwe123!$%@mail.com', 'qwe123!$%')
 ])
-def test_post_v1_account_with_datas(dm_api_facade, dm_orm, login, email, password):
+def test_post_v1_account_with_datas(dm_api_facade, dm_orm, login, email, password, assertions):
     dm_orm.delete_user_by_login(login=login)
     dm_api_facade.mailhog.delete_all_messages()
-    response = dm_api_facade.account.register_new_user(
-        login=login,
-        email=email,
-        password=password,
-        status_code=201
-    )
-    dataset = dm_orm.get_user_by_login(login=login)
-    for row in dataset:
-        assert_that(row, has_entries(
-            {
-                'Login': login,
-                'Activated': False
-            }
-        ))
-
+    dm_api_facade.account.register_new_user(login=login, email=email, password=password, status_code=201)
+    dm_orm.get_user_by_login(login=login)
+    assertions.check_user_was_created(login=login)
     dm_api_facade.account.activate_registered_user(login=login)
-    dataset = dm_orm.get_user_by_login(login=login)
-    time.sleep(2)
-    for row in dataset:
-        assert row.Activated is True, f'User {login} not activated'
-
-    dm_api_facade.login.login_user(
-        login=login,
-        password=password
-    )
+    dm_orm.get_user_by_login(login=login)
+    assertions.check_user_was_activated(login=login)
+    dm_api_facade.login.login_user(login=login, password=password)
 
 
 @pytest.mark.parametrize('login', ['logintest16', '2156236', '@#$%^&'])
 @pytest.mark.parametrize('email', ['logintest16@test.ru', '2156236@mail.com', '@#$%^&@gwe.weh'])
 @pytest.mark.parametrize('password', ['logintest16', '2156236', '@#$%^&'])
-def test_post_v1_account_with_datas_pairwise(dm_api_facade, dm_orm, login, email, password):
+def test_post_v1_account_with_datas_pairwise(dm_api_facade, dm_orm, login, email, password, assertions):
     dm_orm.delete_user_by_login(login=login)
     dm_api_facade.mailhog.delete_all_messages()
-    dm_api_facade.account.register_new_user(
-        login=login,
-        email=email,
-        password=password,
-        status_code=201
-    )
-    dataset = dm_orm.get_user_by_login(login=login)
-    for row in dataset:
-        assert_that(row, has_entries(
-            {
-                'Login': login,
-                'Activated': False
-            }
-        ))
-
+    dm_api_facade.account.register_new_user(login=login, email=email, password=password, status_code=201)
+    dm_orm.get_user_by_login(login=login)
+    assertions.check_user_was_created(login=login)
     dm_api_facade.account.activate_registered_user(login=login)
-    dataset = dm_orm.get_user_by_login(login=login)
-    time.sleep(2)
-    for row in dataset:
-        assert row.Activated is True, f'User {login} not activated'
+    dm_orm.get_user_by_login(login=login)
+    assertions.check_user_was_activated(login=login)
+    dm_api_facade.login.login_user(login=login, password=password)
 
-    dm_api_facade.login.login_user(
-        login=login,
-        password=password
-    )
 
 @pytest.mark.parametrize('login, password, email, check_password_error, status_code', [
     ('logintest20', random_long_password(), 'logintest20@test.com', '', 201),
@@ -158,7 +122,8 @@ def test_post_v1_account_password(
         email,
         password,
         status_code,
-        check_password_error
+        check_password_error,
+        assertions
 ):
     dm_orm.delete_user_by_login(login=login)
     dm_api_facade.mailhog.delete_all_messages()
@@ -175,25 +140,12 @@ def test_post_v1_account_password(
             }
         ))
     else:
-        dataset = dm_orm.get_user_by_login(login=login)
-        for row in dataset:
-            assert_that(row, has_entries(
-                {
-                    'Login': login,
-                    'Activated': False
-                }
-            ))
-
+        assertions.check_user_was_created(login=login)
         dm_api_facade.account.activate_registered_user(login=login)
-        dataset = dm_orm.get_user_by_login(login=login)
-        time.sleep(2)
-        for row in dataset:
-            assert row.Activated is True, f'User {login} not activated'
+        dm_orm.get_user_by_login(login=login)
+        assertions.check_user_was_activated(login=login)
+        dm_api_facade.login.login_user(login=login, password=password)
 
-        dm_api_facade.login.login_user(
-            login=login,
-            password=password
-        )
 
 @pytest.mark.parametrize('login, password, email, check_login_error, status_code', [
     ('logintest20', random_long_password(), 'logintest20@test.com', '', 201),
@@ -206,7 +158,8 @@ def test_post_v1_account_login(
         email,
         password,
         status_code,
-        check_login_error
+        check_login_error,
+        assertions
 ):
     response = dm_api_facade.account.register_new_user(
         login=login,
@@ -221,25 +174,12 @@ def test_post_v1_account_login(
             }
         ))
     else:
-        dataset = dm_orm.get_user_by_login(login=login)
-        for row in dataset:
-            assert_that(row, has_entries(
-                {
-                    'Login': login,
-                    'Activated': False
-                }
-            ))
-
+        assertions.check_user_was_created(login=login)
         dm_api_facade.account.activate_registered_user(login=login)
-        dataset = dm_orm.get_user_by_login(login=login)
-        time.sleep(2)
-        for row in dataset:
-            assert row.Activated is True, f'User {login} not activated'
+        dm_orm.get_user_by_login(login=login)
+        assertions.check_user_was_activated(login=login)
+        dm_api_facade.login.login_user(login=login, password=password)
 
-        dm_api_facade.login.login_user(
-            login=login,
-            password=password
-        )
 
 @pytest.mark.parametrize('login, password, email, check_email_error, status_code', [
     ('logintest21', random_long_password(), 'logintest21@test.com', '', 201),
@@ -252,7 +192,8 @@ def test_post_v1_account_email(
         email,
         password,
         status_code,
-        check_email_error
+        check_email_error,
+        assertions
 ):
     response = dm_api_facade.account.register_new_user(
         login=login,
@@ -267,22 +208,8 @@ def test_post_v1_account_email(
             }
         ))
     else:
-        dataset = dm_orm.get_user_by_login(login=login)
-        for row in dataset:
-            assert_that(row, has_entries(
-                {
-                    'Login': login,
-                    'Activated': False
-                }
-            ))
-
+        assertions.check_user_was_created(login=login)
         dm_api_facade.account.activate_registered_user(login=login)
-        dataset = dm_orm.get_user_by_login(login=login)
-        time.sleep(2)
-        for row in dataset:
-            assert row.Activated is True, f'User {login} not activated'
-
-        dm_api_facade.login.login_user(
-            login=login,
-            password=password
-        )
+        dm_orm.get_user_by_login(login=login)
+        assertions.check_user_was_activated(login=login)
+        dm_api_facade.login.login_user(login=login, password=password)
