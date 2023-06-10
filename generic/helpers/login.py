@@ -8,11 +8,12 @@ class Login:
         self.facade: Facade = facade
 
     def set_headers(self, headers):
-        self.facade.login_api.client.session.headers.update(headers)
+        self.facade.login_api.api_client.select_header_accept(headers)
 
     def login_user(self, login: str, password: str, remember_me: bool = True):
         with allure.step("Авторизация пользователя"):
             response = self.facade.login_api.v1_account_login_post(
+                _return_http_data_only=False,
                 login_credentials=LoginCredentials(
                     login=login,
                     password=password,
@@ -26,7 +27,8 @@ class Login:
             login=login,
             password=password,
             remember_me=remember_me)
-        token = {'X-DM-Auth-Token': response.headers['X-DM-Auth-Token']}
+        token = response[2]['X-DM-Auth-Token']
+        print(response)
         return token
 
     def logout_user(self, **kwargs):

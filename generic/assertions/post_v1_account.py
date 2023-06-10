@@ -1,5 +1,3 @@
-import time
-
 import allure
 from hamcrest import assert_that, has_entries
 from generic.helpers.orm_db import OrmDatabase
