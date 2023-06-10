@@ -1,6 +1,7 @@
 service:
   dm_api_account: http://localhost:5051
   mailhog: http://localhost:5025
+  target: localhost:5052
 
 database:
   dm3_5:
