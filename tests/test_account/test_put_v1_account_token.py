@@ -28,8 +28,8 @@ def test_put_v1_account_token(dm_api_facade, assertions, dm_orm):
         {
             "login": login,
             "roles": [
-                UserRole.allowed_values[('value',)]['GUEST'],
-                UserRole.allowed_values[('value',)]['PLAYER']
+                UserRole('Guest'),
+                UserRole('Player')
             ]
         }
     ))
