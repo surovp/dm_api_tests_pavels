@@ -1,7 +1,6 @@
 from generic.assertions.response_checker import check_status_code_http
 from data.post_v1_account import PostV1AccountData as user_data
 from data.post_v1_account import random_datas
-from hamcrest import assert_that, has_entries
 from collections import namedtuple
 import pytest
 import allure

@@ -28,7 +28,10 @@ class Account:
         return response
 
     def get_current_user_info(self, token):
-        response = self.facade.account_api.get_current(x_dm_auth_token=token)
+        response = self.facade.account_api.get_current(
+            x_dm_auth_token=token,
+            _check_return_type=False
+        )
         return response
 
 

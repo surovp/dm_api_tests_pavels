@@ -31,11 +31,11 @@ class Login:
         print(response)
         return token
 
-    def logout_user(self, **kwargs):
-        response = self.facade.login_api.v1_account_login_delete(**kwargs)
+    def logout_user(self, x_dm_auth_token):
+        response = self.facade.login_api.v1_account_login_delete(x_dm_auth_token=x_dm_auth_token)
         return response
 
-    def logout_user_from_all_devices(self, **kwargs):
-        response = self.facade.login_api.v1_account_login_all_delete(**kwargs)
+    def logout_user_from_all_devices(self, x_dm_auth_token):
+        response = self.facade.login_api.v1_account_login_all_delete(x_dm_auth_token=x_dm_auth_token)
         return response
 

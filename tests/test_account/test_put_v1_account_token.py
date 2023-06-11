@@ -1,7 +1,7 @@
 import structlog
 from dm_api_account.models import UserRole
-from services.dm_api_account import Facade
 from hamcrest import assert_that, has_properties
+from data.post_v1_account import PostV1AccountData
 
 structlog.configure(
     processors=[
@@ -9,13 +9,27 @@ structlog.configure(
     ]
 )
 
+login = PostV1AccountData.login
+password = PostV1AccountData.password
+email = PostV1AccountData.email
 
-def test_put_v1_account_token():
-    api = Facade(host='http://localhost:5051')
-    response = api.account_api.put_v1_account_token(token='04efc017-32a9-42c7-9389-89f8c23fcccc')
+
+def test_put_v1_account_token(dm_api_facade, assertions, dm_orm):
+
+    dm_orm.delete_user_by_login(login=login)
+    dm_api_facade.mailhog.delete_all_messages()
+
+    dm_api_facade.account.register_new_user(login=login, email=email, password=password)
+    assertions.check_user_was_created(login=login)
+    token = dm_api_facade.mailhog.get_token_by_login(login=login)
+    response = dm_api_facade.account_api.activate(token=token)
+
     assert_that(response.resource, has_properties(
         {
-            "login": "logintest5",
-            "roles": [UserRole.GUEST, UserRole.PLAYER]
+            "login": login,
+            "roles": [
+                UserRole.allowed_values[('value',)]['GUEST'],
+                UserRole.allowed_values[('value',)]['PLAYER']
+            ]
         }
     ))

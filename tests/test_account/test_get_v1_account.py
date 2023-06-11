@@ -8,5 +8,5 @@ def test_get_v1_account(dm_api_facade):
     )
     dm_api_facade.set_headers(headers=token)
     dm_api_facade.account.get_current_user_info(token=token)
-    dm_api_facade.login.logout_user()
+    dm_api_facade.login.logout_user(x_dm_auth_token=token)
 
