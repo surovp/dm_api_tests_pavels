@@ -6,7 +6,7 @@ from dm_api_account import Configuration, ApiClient
 
 
 class Facade:
-    def __init__(self, host, mailhog=None, headers=None):
+    def __init__(self, host, mailhog=None):
         with ApiClient(configuration=Configuration(host=host)) as api_client:
             self.account_api = AccountApi(api_client)
             self.login_api = LoginApi(api_client)

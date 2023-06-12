@@ -1,7 +1,7 @@
 import structlog
 from dm_api_account.models import UserRole
 from hamcrest import assert_that, has_properties
-from data.post_v1_account import PostV1AccountData
+from data.post_v1_account import PostV1AccountData as data_user
 
 structlog.configure(
     processors=[
@@ -9,9 +9,9 @@ structlog.configure(
     ]
 )
 
-login = PostV1AccountData.login
-password = PostV1AccountData.password
-email = PostV1AccountData.email
+login = data_user.login
+password = data_user.password
+email = data_user.email
 
 
 def test_put_v1_account_token(dm_api_facade, assertions, dm_orm):
