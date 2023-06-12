@@ -13,7 +13,7 @@ curlify==2.2.1
 datamodel-code-generator==0.18.1
 db-client @ git+https://github.com/surovp/db_client.git@88e787cd490064b9db6740c3c8a06bd97bfc685b
 distconfig3==1.0.1
-dm-api-account @ git+https://github.com/surovp/dm_api_account.git@4ba8da21a7813841db6c005ec435f6b45dc85e84
+dm-api-account @ git+https://github.com/surovp/dm_api_account.git@fe478d8b16124e1ef49758e1fbdc51cf260ec161
 dm-api-search @ git+https://github.com/surovp/dm_api_search.git@cd99bd5af711c9ece9307480ed3ec337653869f5
 dm-api-search-async @ git+https://github.com/surovp/dm_api_search_async.git@d135cd5df420e7eb3a964eef26bb47bc8b18eabd
 dnspython==2.3.0

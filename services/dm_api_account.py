@@ -1,8 +1,9 @@
-from dm_api_account.apis.account_api import AccountApi
-from dm_api_account.apis.login_api import LoginApi
+from dm_api_account.apis import AccountApi
+from dm_api_account.apis import LoginApi
 from generic.helpers.account import Account
 from generic.helpers.login import Login
-from dm_api_account import Configuration, ApiClient
+from dm_api_account.configuration import Configuration
+from dm_api_account.api_client import ApiClient
 
 
 class Facade:
