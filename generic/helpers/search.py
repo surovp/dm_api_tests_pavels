@@ -1,4 +1,4 @@
-from dm_api_search import DmApiSearch
+from dm_api_search.dm_api_search import DmApiSearch
 from dm_api_search.search_pb2 import SearchRequest
 
 
