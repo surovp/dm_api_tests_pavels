@@ -2,9 +2,12 @@ import pytest
 import structlog
 from vyper import v
 from pathlib import Path
+from grpclib.client import Channel
+from generic.helpers.search import Search
 from services.dm_api_account import Facade
 from generic.helpers.mailhog import MailHogApi
 from generic.helpers.orm_db import OrmDatabase
+from dm_api_search_async import SearchEngineStub
 from generic.assertions.post_v1_account import AssertionsPostV1Account
 
 
@@ -46,6 +49,21 @@ def dm_orm():
         )
     yield connect
     connect.db.close_connection()
+
+
+@pytest.fixture
+def grpc_search():
+    client = Search(target=v.get('service.target'))
+    yield client
+    client.close()
+
+
+@pytest.fixture
+def grpc_search_async():
+    channel = Channel(host='localhost', port=5052)
+    client = SearchEngineStub(channel)
+    yield client
+    channel.close()
 
 
 @pytest.fixture()
