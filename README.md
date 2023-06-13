@@ -26,7 +26,7 @@
 
 ### <img width="3%" title="Allure Report" src="images/logo_stacks/allure_report.png"> Allure report
 ##### После прохождения тестов, результаты можно посмотреть в генерируемом Allure отчете.
-![This is an image](images/screenshots/allure_dashboard.png)
+![This is an image](images/screenshots/allure_report.png)
 
 ##### Во вкладке Graphs можно посмотреть графики о прохождении тестов, по их приоритезации, по времени прохождения и др.
 ![This is an image](images/screenshots/allure_graphs.png)
