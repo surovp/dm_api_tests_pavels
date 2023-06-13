@@ -16,7 +16,7 @@
   <code><img width="5%" title="GitHub" src="images/logo_stacks/github.png"></code>
   <code><img width="5%" title="Allure Report" src="images/logo_stacks/allure_report.png"></code>
   <code><img width="5%" title="gRPC" src="images/logo_stacks/grpc.png"></code>
-  <code><img width="5%" title="gRPC" src="images/logo_stacks/openapi.png"></code>
+  <code><img width="5%" title="OpenApi" src="images/logo_stacks/openapi.png"></code>
 </p>
 
 ### В файле config настраиваются окружения и выносятся основные подключения.
