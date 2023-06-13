@@ -26,10 +26,10 @@
 
 ### <img width="3%" title="Allure Report" src="images/logo_stacks/allure_report.png"> Allure report
 ##### После прохождения тестов, результаты можно посмотреть в генерируемом Allure отчете.
-![This is an image](images/screenshots/allure_report.png)
+![This is an image](images/screenshots/allure-report.png)
 
 ##### Во вкладке Graphs можно посмотреть графики о прохождении тестов, по их приоритезации, по времени прохождения и др.
-![This is an image](images/screenshots/allure_graphs.png)
+![This is an image](images/screenshots/allure-graphs.png)
 
 ##### Во вкладке Suites находятся собранные тест кейсы, у которых описаны шаги и добавлены логи.
-![This is an image](images/screenshots/allure_suites.png)
+![This is an image](images/screenshots/allure-suites.png)
